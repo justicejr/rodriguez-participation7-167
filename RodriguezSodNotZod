@@ -1,0 +1,264 @@
+package edu.cpt167.justice.participation6;
+
+import java.util.Scanner;
+
+public class JusticeSodNotZod6 {
+
+	public static final double DISCOUNT_RATE_MEMBER = 0.15;
+	public static final double DISCOUNT_RATE_SENIOR = 0.25;
+	public static final double DISCOUNT_RATE_NONE = 0.0;
+	public static final double TAX_RATE = 0.075;
+
+	static final String TOY = "toy";
+	static final String BOOK = "book";
+	static final String GUM = "gum";
+	static final double TOY_PRICE = 2.00;
+	static final double BOOK_PRICE = 5.00;
+	static final double GUM_PRICE = 1.50;
+	static final int RESET_VALUE = 0;
+
+	public static void main(String[] args) { // open
+
+		Scanner input = new Scanner(System.in);
+
+		String userName = "";
+		String itemName = "";
+		double itemCost = 0.0;
+		double discountAmt = 0.0;
+		double discountPrice = 0.0;
+		double discountRate = 0.0;
+		int howMany = 0;
+		int ItemTypes = 0;
+		double subTotal = 0.0;
+		double tax = 0.0;
+		double totalCost = 0.0;
+		char rateSelection = '\u0000';
+		char itemSelection = '\u0000';
+		double grandTotal = 0;
+		int memberCount = 0;
+		int seniorCount = 0;
+		int noDiscountCount = 0;
+		char menuSelection = 'Y';
+		int toyCount = 0;
+		int gumCount = 0;
+		int bookCount = 0;
+		int itemCounter = 0;
+		double customerTotal = 0.0;
+		int transactionCounter = 0;
+
+		userName = displayWelcomeBanner(input);
+
+		while (menuSelection != 'N') {
+
+			ItemTypes = validateItemTypes(input);
+			
+			while (transactionCounter < ItemTypes) {
+				howMany = validateHowMany(input);
+
+				System.out.println("\nDISCOUNT MENU");
+				System.out.printf("[A] for MEMBER", DISCOUNT_RATE_MEMBER);
+				System.out.printf("[B] for SENIOR", DISCOUNT_RATE_SENIOR);
+				System.out.printf("[C] for NONE", DISCOUNT_RATE_NONE);
+				System.out.println("-------------------------------------------------------------------------");
+				System.out.println("Enter your selection here:");
+				rateSelection = input.next().toUpperCase().charAt(0);
+				System.out.println("");
+
+				while (rateSelection != 'A' && rateSelection != 'B' && rateSelection != 'C') {
+					System.out.println("\n~~~Invalid selection.~~~\n");
+					System.out.println("Discount menu");
+					System.out.printf("[A] for MEMBER", DISCOUNT_RATE_MEMBER);
+					System.out.printf("[B] for SENIOR", DISCOUNT_RATE_SENIOR);
+					System.out.printf("[C] for NONE", DISCOUNT_RATE_NONE);
+
+					System.out.print("Enter your selection here: ");
+					rateSelection = input.next().toUpperCase().charAt(0);
+					System.out.println("");
+				}
+
+				if (rateSelection == 'A') {
+					discountRate = DISCOUNT_RATE_MEMBER;
+					memberCount++;
+				} else if (rateSelection == 'B') {
+					discountRate = DISCOUNT_RATE_SENIOR;
+					seniorCount++;
+				} else {
+					discountRate = DISCOUNT_RATE_NONE;
+					noDiscountCount++;
+				}
+				itemSelection = validateItemMenu(input);
+
+				if (itemSelection == 'A') {
+					itemName = TOY;
+					itemCost = TOY_PRICE;
+					toyCount++;
+				} else if (itemSelection == 'B') {
+					itemName = BOOK;
+					itemCost = BOOK_PRICE;
+					bookCount++;
+				} else {
+					itemName = GUM;
+					itemCost = GUM_PRICE;
+					gumCount++;
+				}
+				transactionCounter++;
+
+			discountAmt = itemCost * discountRate;
+			discountPrice = itemCost - discountAmt;
+			subTotal = howMany * discountPrice;
+			tax = subTotal * TAX_RATE;
+			totalCost = subTotal + tax;
+			customerTotal = customerTotal + totalCost;
+			grandTotal = grandTotal + totalCost;
+
+			displayItemReceipt(userName, itemName, itemCost, discountAmt, discountPrice, howMany, subTotal, tax,
+					totalCost);
+			itemCounter++;
+			}
+			
+			if(ItemTypes > 0) {
+			displayCustomerReport(ItemTypes, customerTotal);
+			itemCounter = RESET_VALUE;
+			customerTotal = RESET_VALUE;
+			transactionCounter = RESET_VALUE;
+			menuSelection = validateMainMenu(input);
+			}
+			else {
+				itemCounter = RESET_VALUE;
+				customerTotal = RESET_VALUE;
+				menuSelection = validateMainMenu(input);
+			}
+			
+			
+		}
+		if (grandTotal > 0) {
+			displayFinalReport(toyCount, gumCount, bookCount, memberCount, seniorCount, noDiscountCount,
+					grandTotal);
+			displayFarewellMessage();
+		} else {
+			displayFarewellMessage();
+		}
+	}
+
+	public static String displayWelcomeBanner(Scanner input) {
+		// print out "Welcome"
+		// end
+		String userName = "";
+		System.out.println("Hello! Thank you for using the sales system!");
+		System.out.println("This will help keep track of purchases as well as other important information!");
+		System.out.println("Let's get started!");
+		System.out.println("What is your name?");
+		userName = input.next();
+
+		return userName;
+	}
+
+	public static char validateMainMenu(Scanner input) {
+		char anotherCustomer = '\u0000';
+
+		// display menu options
+		System.out.println("\nRepeat Menu");
+		System.out.println("Is there another customer?");
+		System.out.printf("%-4s%-25s\n", "[Y]", "yes");
+		System.out.printf("%-4s%-25s\n", "[N]", "no");
+		anotherCustomer = input.next().toUpperCase().charAt(0);
+
+		while (anotherCustomer != 'Y' && anotherCustomer != 'N') {
+			System.out.println("Sorry, you must choose 'Y' or 'N'.");
+			System.out.println("\nRepeat Menu");
+			System.out.println("Is there another customer?");
+			System.out.printf("%-4s%-25s\n", "[Y]", "yes");
+			System.out.printf("%-4s%-25s\n", "[N]", "no");
+			anotherCustomer = input.next().toUpperCase().charAt(0);
+		}
+		// allow user to make selection
+		// return that selection
+
+		return anotherCustomer;
+	}
+
+	public static char validateItemMenu(Scanner input) {
+		// ask user which item to purchase
+		// return that selection
+		char itemSelection = '\u0000';
+		// display menu options
+		System.out.println("\nItem Menu");
+		System.out.println("Which item would you like?");
+		System.out.printf("%-4s%-25s\n", "[A]", TOY);
+		System.out.printf("%-4s%-25s\n", "[B]", BOOK);
+		System.out.printf("%-4s%-25s\n", "[C]", GUM);
+		itemSelection = input.next().toUpperCase().charAt(0);
+		System.out.println();
+
+		while (itemSelection != 'A' && itemSelection != 'B' && itemSelection != 'C') {
+			System.out.println("Sorry, you must choose 'A', 'B' or 'C'.");
+			System.out.println("\nItem Menu");
+			System.out.println("Which item would you like?");
+			System.out.printf("%-4s%-25s\n", "[A]", TOY);
+			System.out.printf("%-4s%-25s\n", "[B]", BOOK);
+			System.out.printf("%-4s%-25s\n", "[C]", GUM);
+			itemSelection = input.next().toUpperCase().charAt(0);
+		}
+		return itemSelection;
+	}
+
+	public static int validateHowMany(Scanner input) {
+		int howMany = 0;
+		System.out.println("How many items are in this batch?");
+		howMany = input.nextInt();
+
+		return howMany;
+	}
+
+	public static int validateItemTypes(Scanner input) {
+		int ItemTypes = 0;
+		System.out.println("How many different items are you purchasing?");
+		ItemTypes = input.nextInt();
+
+
+		return ItemTypes;
+	}
+
+	public static void displayItemReceipt(String userName, String itemName, double itemPrice, double discountAmt,
+			double discountPrice, int howMany, double subTotal, double tax, double totalCost) {
+		System.out.println("Thank you for your assistance " + userName + ".");
+		System.out.println("You have have selected " + itemName + ".");
+		System.out.println("The original price is " + itemPrice + ".");
+		System.out
+		.println("The discounted price is " + discountPrice + " per item, of which there are " + howMany + ".");
+		System.out.println("The subtotal is " + subTotal + " dollars, and the tax is " + tax + " dollars");
+		System.out.println("The total amount due is " + totalCost + " dollars.");
+		System.out.println("You saved " + discountAmt + " dollars!");
+		System.out.println();
+		System.out.println("Thank you for shopping with us today!");
+		System.out.println();
+		System.out.println("Have a great day!");
+	}
+
+	public static void displayCustomerReport(int ItemTypes, double customerTotal) {
+		System.out.println("How many different items were purchased:" + ItemTypes);
+		System.out.println("The total price of the items purchased is:$" + customerTotal);
+	}
+
+	public static void displayFinalReport(int toyCount, int gumCount, int bookCount, int memberCount, int seniorCount,
+			int noDiscountCount, double grandTotal) {
+		// print out report
+		// wait for enter
+		// end
+		System.out.printf("%-4s%-25s\n", "members today :", memberCount);
+		System.out.printf("%-4s%-25s\n", "seniors today :", seniorCount);
+		System.out.printf("%-4s%-25s\n", "non-members today :", noDiscountCount);
+		System.out.printf("%-4s%-25s\n", "Toys today :", toyCount);
+		System.out.printf("%-4s%-25s\n", "Gum today :", gumCount);
+		System.out.printf("%-4s%-25s\n", "Book today :", bookCount);
+		System.out.printf("%-4s%-25s\n", "total sold today :$", grandTotal);
+	}
+
+	public static void displayFarewellMessage() {
+		// print out farewell
+		// end
+		System.out.println("Thank you for shopping with us today!");
+		System.out.println();
+		System.out.println("Have a great day!");
+	}
+}
